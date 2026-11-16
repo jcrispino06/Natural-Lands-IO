@@ -2,11 +2,8 @@ import { Text, View, StatusBar, FlatList, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
-// import the library that you installed
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useState } from 'react';
-// Include other code from last slide here….we‘re just replacing App()
-// You can import Ionicons from @expo/vector-icons/Ionicons if you use Expo or
 
 import {MapScreen} from './Tabs/Map.js';
 import {TreeList} from './Tabs/TreeList.js';
@@ -17,6 +14,16 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [iconColor, setIconColor] = useState('green');
+  const [treeData, setTreeData] = useState(trees);
+
+  const colors = {
+    background: '#91AE6E',
+    button: '#F2F2F2',
+    valid: '#689D4B',
+    invalid: '#D96868'
+  }
+  const [theme, setTheme] = useState(colors);
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -45,10 +52,10 @@ export default function App() {
       <BlurView tint="light" intensity={100} style={StyleSheet.absoluteFill} />
     )
   })}>
-        <Tab.Screen name="Map" component={MapScreen} />
-        <Tab.Screen name="Trees" component={TreeList}/>
-        <Tab.Screen name="Account" component={AccountScreen}/>
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Map" component={MapScreen} initialParams={{treeData: treeData, colors: theme}}/>
+        <Tab.Screen name="Trees" component={TreeList} initialParams={{trees:{data: treeData}, theme: {colors: theme}}}/>
+        <Tab.Screen name="Account" component={AccountScreen} initialParams={{treeData: treeData, colors: theme}}/>
+        <Tab.Screen name="Settings" component={SettingsScreen} initialParams={{treeData: treeData, theme: theme}}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
