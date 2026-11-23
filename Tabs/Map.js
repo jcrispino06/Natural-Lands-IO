@@ -26,6 +26,7 @@ export function MapScreen({route, navigation}) {
     const [errorMsg, setErrorMsg] = useState();
     const [plots, setPlots] = useState({features:[]});
     const [trees, setTrees] = useState({features:[]});
+    const [currTreeInfo, setCurrTree] = useState({id: null, measurements:[]})
     const [loading, setLoading] = useState(true);
 
     const getPlots = async () =>{
@@ -48,7 +49,7 @@ export function MapScreen({route, navigation}) {
       fetch(url)
         .then((response) => response.json())
         .then((responseJson) => {
-          console.log(responseJson);
+          // console.log(responseJson);
           setTrees(responseJson)
         }).finally(()=>{
           setLoading(false);
@@ -58,9 +59,44 @@ export function MapScreen({route, navigation}) {
         });
     }
 
+    const getAllTrees = async () => {
+      const url = "https://ic-research2.eastus.cloudapp.azure.com:21963/app/trees";
+      fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          // console.log(responseJson);
+          setTrees(responseJson)
+        }).finally(()=>{
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    const getTreeInfoMeasurements = async (tree_id) => {
+      const url = "https://ic-research2.eastus.cloudapp.azure.com:21963/app/trees/"+tree_id;
+      fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson);
+          setCurrTree(responseJson)
+        }).finally(()=>{
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    const TreeInfo = (props) => {
+        console.log(currTreeInfo);
+    }
+
 
     useEffect(()=>{
       getPlots();
+      getAllTrees();
     }, [])
 
     function Plots(props){
@@ -68,7 +104,7 @@ export function MapScreen({route, navigation}) {
         const feature_x = feature.geometry.coordinates[1];
         const feature_y = feature.geometry.coordinates[0];
         const plot_id = feature.properties.id;
-        console.log(`${plot_id}: ${feature_x}, ${feature_y}`)
+        // console.log(`${plot_id}: ${feature_x}, ${feature_y}`)
         return <Marker key={plot_id} coordinate={{latitude: feature_x,longitude: feature_y}} onPress={()=>{getPlotTrees(plot_id)}}>
                   <View style={[{backgroundColor: "white"}, styles.plotMarker]}>
                     <Text>{plot_id}</Text>
@@ -82,8 +118,8 @@ export function MapScreen({route, navigation}) {
         const feature_x = feature.geometry.coordinates[1];
         const feature_y = feature.geometry.coordinates[0];
         const id = feature.properties.id;
-        console.log(`${id}: ${feature_x}, ${feature_y}`)
-        return <Marker key={id} coordinate={{latitude: feature_x,longitude: feature_y}}>
+        // console.log(`${id}: ${feature_x}, ${feature_y}`)
+        return <Marker key={id} coordinate={{latitude: feature_x,longitude: feature_y}} onPress={()=>{getTreeInfoMeasurements(id)}}>
                   <View style={[{backgroundColor: "green", padding: 5}]}>
                   </View>
                 </Marker>
@@ -96,7 +132,7 @@ export function MapScreen({route, navigation}) {
             initialRegion={initialRegion}
             showsUserLocation={true}>
               <Trees/>
-              <Plots/>
+              {/* <Plots/> */}
           </MapView>
       </View>
     );

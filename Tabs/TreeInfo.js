@@ -4,5 +4,6 @@ import { Location } from 'expo-location/next';
 import { useState, useEffect } from 'react';
 
 export const TreeInfo = (props) => {
+    const treeid = props.treeid;
     
 }
