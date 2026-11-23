@@ -1,5 +1,5 @@
 import { Text, View, StatusBar, FlatList, StyleSheet, TouchableOpacity, useWindowDimensions, Dimensions, Pressable} from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { Location } from 'expo-location/next';
 import { useState, useEffect } from 'react';
 
@@ -12,10 +12,22 @@ const LATITUDE_DELTA = 0.02;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const SPACE = 0.01;
 
+async function getPlots(){
+  const url = "https://ic-research2.eastus.cloudapp.azure.com:21963/app/plots";
+  return fetch(url)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson.features);
+      return responseJson.features;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+}
+
 export function MapScreen({route, navigation}) {
     const {height, width, scale, fontScale} = useWindowDimensions();
-    const treeData = route.params.treeData;
-    const colors = route.params.colors;
 
     const initialRegion = {
       latitude: LATITUDE,
@@ -24,32 +36,23 @@ export function MapScreen({route, navigation}) {
       longitudeDelta: LONGITUDE_DELTA,
     };
 
-    const [location, setLocation] = useState();
+    const [location, setLocation] = useState({latitude: 42.4175848046414, longitude: -76.4931491097811});
     const [errorMsg, setErrorMsg] = useState();
+    const [plots, setPlots] = useState();
 
-    useEffect(() => {
-    async function getCurrentLocation() {
-      
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+    function MarkerElement(props){
+      return <Marker coordinate={props.coordinate} onPress={()=>{getPlots()}}>
+              <Text>{props.title}</Text>
+            </Marker>
     }
-
-      getCurrentLocation();
-    }, []);
 
     return (
       <View style={styles.container}>
           <MapView style={styles.map}
             initialRegion={initialRegion}
-            showsUserLocation={true}
-          />
-          <Text onPress={async ()=>{getCurrentLocation()}}>{JSON.stringify(location)}</Text>
+            showsUserLocation={true}>
+              <MarkerElement title="V" coordinate={location}/>
+          </MapView>
       </View>
     );
 }
