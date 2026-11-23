@@ -44,7 +44,7 @@ function AccountScreen(props){
         <Text>Current User: {props.account.firstname} {props.account.lastname}</Text>
         <Text>Username: {props.account.username}</Text>
         <Text>Current Group: {((props.account.group === null) ? "No Group" : props.account.group)}</Text>
-        <Button title='Change User' onPress={()=>{props.changeUser(testNewUser)}}/>
+        <Button title='Change User' onPress={()=>{props.navigation.navigate('LoginScreen')}}/>
         <Button title='Change Group' onPress={()=>{props.changeGroup(testNewGroup)}}/>
       </View>
     </View>

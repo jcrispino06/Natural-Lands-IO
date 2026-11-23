@@ -1,32 +1,27 @@
 import { Text, View, StatusBar, FlatList, StyleSheet} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, PrivateValueStore } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useState } from 'react';
 
+// Screens
 import {MapScreen} from './Tabs/Map.js';
 import {TreeList} from './Tabs/TreeList.js';
 import {SettingsScreen} from './Tabs/Settings.js';
-import {AccountScreen} from './Tabs/Account.js';
+import AccountScreen from './Tabs/Account.js';
+import LoginScreen from './Tabs/Login.js';
+
+import { connect, Provider } from 'react-redux';
+import store from './Tabs/redux/store.js';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-export default function App() {
+function MainScreens(props) {
   const [iconColor, setIconColor] = useState('green');
-  const [treeData, setTreeData] = useState(trees);
-
-  const colors = {
-    background: '#91AE6E',
-    button: '#F2F2F2',
-    valid: '#689D4B',
-    invalid: '#D96868'
-  }
-  const [theme, setTheme] = useState(colors);
-
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
+  return <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -52,12 +47,35 @@ export default function App() {
       <BlurView tint="light" intensity={100} style={StyleSheet.absoluteFill} />
     )
   })}>
-        <Tab.Screen name="Map" component={MapScreen} initialParams={{treeData: treeData, colors: theme}}/>
-        <Tab.Screen name="Trees" component={TreeList} initialParams={{trees:{data: treeData}, theme: {colors: theme}}}/>
-        <Tab.Screen name="Account" component={AccountScreen} initialParams={{treeData: treeData, colors: theme}}/>
-        <Tab.Screen name="Settings" component={SettingsScreen} initialParams={{treeData: treeData, theme: theme}}/>
+        <Tab.Screen name="Map" component={MapScreen} />
+        <Tab.Screen name="Trees" component={TreeList} />
+        <Tab.Screen name="Account" component={AccountScreen} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
+}
+
+function App() {
+  const [treeData, setTreeData] = useState(null);
+
+  const colors = {
+    background: '#91AE6E',
+    button: '#F2F2F2',
+    valid: '#689D4B',
+    invalid: '#D96868'
+  }
+  const [theme, setTheme] = useState(colors);
+
+  return (
+    <Provider store={store}>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={({ route }) => ({headerShown: false, animation: 'fade_from_bottom'})}>
+        {/* <Stack.Screen name="LoginScreen" component={LoginScreen}/> */}
+        <Stack.Screen name="MainScreens" component={MainScreens}/>
+      </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }
+
+export default App;
 

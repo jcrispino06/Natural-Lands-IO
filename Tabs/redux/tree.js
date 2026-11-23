@@ -1,4 +1,5 @@
 // Types
+export const LOAD_TREES="LOAD_TREES";
 export const CHANGE_TREES="CHANGE_TREES";
 export const FILTER_TREES="FILTER_TREES";
 
@@ -9,6 +10,23 @@ export const changeTrees = (parameter) => (
         payload:parameter
     }
 )
+
+// Tree layout:
+// tree {
+//      tag:
+//      common_name:
+//      scientific_name:
+//      plot_id:
+//      forest_type:
+//      reserve:
+//      status:
+//}
+// measurement {
+//      tag:
+//      date:
+//      measurement:
+//      carbon:
+// }
 
 const initialState = {
     trees:{
@@ -21,8 +39,8 @@ const initialState = {
 // Reducer
 const treeReducer = (state=initialState,action)=>{
     switch(action.type){
-        case FILTER_TREES:{
-
+        case LOAD_TREES:{
+            
         }
         default: {
             return state;

@@ -10,8 +10,6 @@ export function TreeList({route, navigation}) {
 	    <TouchableOpacity onPress={()=>{setTreeInput(true); setSelectedTree(data.item.tag)}}><Text style={[styles.row, {width: width*0.95, backgroundColor: ((data.item.status === 'measured') ? colors.invalid : colors.valid)}]}>
 		{data.item.tag}: {data.item.nameCommon}</Text></TouchableOpacity>)
     };
-
-    const [treeData, setTreeData] = useState(route.params.trees.data);
     const [treeInput, setTreeInput] = useState(false);
     const [filterSelect, setFilterSelect] = useState(false);
     const [currentSelectedTreeID, setSelectedTree] = useState();
@@ -102,7 +100,7 @@ export function TreeList({route, navigation}) {
     <View style={styles.background}>
         <View style={styles.container}>
             <SearchBar/>
-            <View style={styles.flatlistContainer}><FlatList keyExtractor={item => item.tag} data={treeData} renderItem={_renderItem}/></View>
+            <View style={styles.flatlistContainer}><FlatList keyExtractor={item => item.tag} renderItem={_renderItem}/></View> 
             <FilterMenu/>
         </View>
     </View>
