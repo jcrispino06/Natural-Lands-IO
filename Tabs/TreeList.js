@@ -1,5 +1,5 @@
-import { Text, View, StatusBar, FlatList, StyleSheet, FocusAwareStatusBar, useWindowDimensions, TextInput, TouchableHighlight, Pressable, TouchableOpacity, Modal} from 'react-native';
-import { useState } from 'react';
+import { Text, View, StatusBar, FlatList, StyleSheet, FocusAwareStatusBar, useWindowDimensions, TextInput, TouchableHighlight, Pressable, TouchableOpacity, Modal, ActivityIndicator} from 'react-native';
+import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {theme} from '../global.js'
 
@@ -7,72 +7,35 @@ export function TreeList({route, navigation}) {
     const {height, width, scale, fontScale} = useWindowDimensions();
     const _renderItem = data => {
         return (
-	    <TouchableOpacity onPress={()=>{setTreeInput(true); setSelectedTree(data.item.tag)}}><Text style={[styles.row, {width: width*0.95, backgroundColor: ((data.item.status === 'measured') ? colors.invalid : colors.valid)}]}>
-		{data.item.tag}: {data.item.nameCommon}</Text></TouchableOpacity>)
+            <TouchableOpacity style={styles.row} onPress={()=>{navigation.navigate('TreeInfo', {id: data.item.properties.id})}}>
+                <Text style={{}}>{data.item.properties.id}: Plot {data.item.properties.plot_id} {data.item.properties.common_name} {data.item.properties.status}</Text>
+            </TouchableOpacity>
+        )
     };
-    const [treeInput, setTreeInput] = useState(false);
+    const [moreTreeInfo, setTreeInfo] = useState(false);
     const [filterSelect, setFilterSelect] = useState(false);
     const [currentSelectedTreeID, setSelectedTree] = useState();
+    const [trees, setTrees] = useState({features:[]})
+    const [loading, setLoading] = useState(true);
 
-    const colors = theme.colors;
+    const getTrees = async () =>{
+      const url = "https://ic-research2.eastus.cloudapp.azure.com:21963/app/trees";
+      fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          setTrees(responseJson)
+        }).finally(()=>{
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
-    const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-        backgroundColor: colors.background
-    },
-    container: {
-        flex: 1,
-        backgroundColor: colors.background,
-        alignItems: 'center',
-        marginTop: 60,
-        gap: 20
-    },
-    search: {
-        flex: 1,
-        flexDirection: "row",
-        width: '95%',
-        marginTop: 0,
-        fontSize: 20,
-        gap: 20
-    },
-    searchButtons: {
-        backgroundColor: colors.button,
-        fontSize: 20,
-        padding: 20,
-        borderRadius: 10
-    },
-    filterButton: {
-        backgroundColor: colors.button,
-        borderRadius: 10,
-        padding: 20,
-        textAlign: 'center',
-    },
-    flatlistContainer: {
-        flex: 12,
-        alignItems: 'center',
-        width: '95%'
-    },
-    row: {
-        flex: 1,
-        fontSize: 20,
-        padding: 10,
-        marginBottom: 10,
-        backgroundColor: '#DDDDDD',
-        borderRadius: 10,
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-    },
-    }});
+    useEffect(()=>{
+        getTrees()
+    }, [])
 
     const SearchBar = () => {
         return (
@@ -99,11 +62,78 @@ export function TreeList({route, navigation}) {
     return (
     <View style={styles.background}>
         <View style={styles.container}>
-            <SearchBar/>
-            <View style={styles.flatlistContainer}><FlatList keyExtractor={item => item.tag} renderItem={_renderItem}/></View> 
+            <View style={styles.flatlistContainer}>
+                {loading? <ActivityIndicator/>:
+                    (<FlatList data={trees.features} keyExtractor={item => item.properties.id} renderItem={_renderItem}/>)
+                }
+            </View> 
             <FilterMenu/>
         </View>
     </View>
   );
 }
+
+const colors = theme.colors;
+
+const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        backgroundColor: colors.background
+    },
+    container: {
+        flex: 1,
+        backgroundColor: colors.background,
+        alignItems: 'center',
+        marginTop: 60,
+        marginBottom: "21%",
+        gap: 20
+    },
+    search: {
+        flex: 1,
+        flexDirection: "row",
+        width: '95%',
+        marginTop: 0,
+        fontSize: 20,
+        gap: 20
+    },
+    searchButtons: {
+        backgroundColor: colors.button,
+        fontSize: 20,
+        padding: 20,
+        borderRadius: 10
+    },
+    filterButton: {
+        backgroundColor: colors.button,
+        borderRadius: 10,
+        padding: 20,
+        textAlign: 'center',
+    },
+    flatlistContainer: {
+        flex: 12,
+        alignItems: 'right',
+        width: '95%'
+    },
+    row: {
+        flex: 1,
+        fontSize: 20,
+        padding: 10,
+        width: undefined,
+        marginBottom: 10,
+        backgroundColor: '#DDDDDD',
+        borderRadius: 10,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+    }
+}
+)
 

@@ -11,6 +11,7 @@ import {TreeList} from './Tabs/TreeList.js';
 import {SettingsScreen} from './Tabs/Settings.js';
 import AccountScreen from './Tabs/Account.js';
 import LoginScreen from './Tabs/Login.js';
+import {TreeInfo} from './Tabs/TreeInfo.js';
 
 import { connect, Provider } from 'react-redux';
 import store from './Tabs/redux/store.js';
@@ -71,6 +72,7 @@ function App() {
       <Stack.Navigator screenOptions={({ route }) => ({headerShown: false, animation: 'fade_from_bottom'})}>
         {/* <Stack.Screen name="LoginScreen" component={LoginScreen}/> */}
         <Stack.Screen name="MainScreens" component={MainScreens}/>
+        <Stack.Screen name="TreeInfo" component={TreeInfo}/>
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
