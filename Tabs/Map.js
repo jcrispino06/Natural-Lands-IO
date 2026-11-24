@@ -84,7 +84,7 @@ export function MapScreen({route, navigation}) {
         const id = feature.properties.id;
         console.log(`${id}: ${feature_x}, ${feature_y}`)
         return <Marker key={id} coordinate={{latitude: feature_x,longitude: feature_y}}>
-                  <View style={[{backgroundColor: "green", padding: 5}]}>
+                  <View style={[{backgroundColor: "green", padding: 5, borderRadius: "100%"}]}>
                   </View>
                 </Marker>
       })
