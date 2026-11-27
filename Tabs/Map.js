@@ -6,10 +6,10 @@ import { useState, useEffect } from 'react';
 const {width, height} = Dimensions.get('window');
 // 42°25'11.84"N 76°29'37.84"W
 const ASPECT_RATIO = width / height;
-const LATITUDE = 42.4174065228024
-const LONGITUDE =  -76.4823668882683
-const LATITUDE_DELTA = 0.02;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const LATITUDE = 42.4156742845761731
+const LONGITUDE = -76.4908316048417808
+const LATITUDE_DELTA = 0.0279374839377;
+const LONGITUDE_DELTA = 0.0158212023713;
 const SPACE = 0.01;
 
 export function MapScreen({route, navigation}) {
