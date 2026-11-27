@@ -4,10 +4,10 @@ import { Location } from 'expo-location/next';
 import { useState, useEffect } from 'react';
 
 const {width, height} = Dimensions.get('window');
-
+// 42°25'11.84"N 76°29'37.84"W
 const ASPECT_RATIO = width / height;
-const LATITUDE = 42.422670
-const LONGITUDE =  -76.495157
+const LATITUDE = 42.4174065228024
+const LONGITUDE =  -76.4823668882683
 const LATITUDE_DELTA = 0.02;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const SPACE = 0.01;
@@ -82,7 +82,7 @@ export function MapScreen({route, navigation}) {
         const feature_x = feature.geometry.coordinates[1];
         const feature_y = feature.geometry.coordinates[0];
         const id = feature.properties.id;
-        console.log(`${id}: ${feature_x}, ${feature_y}`)
+        // console.log(`${id}: ${feature_x}, ${feature_y}`)
         return <Marker key={id} coordinate={{latitude: feature_x,longitude: feature_y}}>
                   <View style={[{backgroundColor: "green", padding: 5, borderRadius: "100%"}]}>
                   </View>
@@ -93,8 +93,10 @@ export function MapScreen({route, navigation}) {
     return (
       <View style={styles.container}>
           <MapView style={styles.map}
-            initialRegion={initialRegion}
-            showsUserLocation={true}>
+            region={initialRegion}
+            showsUserLocation={true}
+            mapType='hybrid'
+            showsCompass="true">
               <Trees/>
               <Plots/>
           </MapView>
